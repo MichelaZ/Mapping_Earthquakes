@@ -1,9 +1,10 @@
 // Add console.log to check to see if our code is working.
-$(document).ready(function() {
-    // STEP 0: Get the Data
-    console.log(line);
-});
-
+// $(document).ready(function() {
+//     // STEP 0: Get the Data
+//     console.log(line);
+// });
+// Accessing the airport GeoJSON URL
+let airportData = "https://raw.githubusercontent.com/MichelaZ/Mapping_Earthquakes/Mapping_Geojson/majorAirports.json";
 
 
 
@@ -59,29 +60,21 @@ var baseMaps = {
 var map = L.map("mapid", {
     center: [30, 30],
     zoom: 2,
-    layers: [nav] // default
+    layers: [dark] // default
   });
 
 L.control.layers(baseMaps).addTo(map);
 
 // Grabbing our GeoJSON data.
-L.geoJSON(sanFranAirport, {
-    // We turn each feature into a marker on the map.
-    pointToLayer: function(feature, latlng) {
-      console.log(feature);
-      return L.marker(latlng)
-      .bindPopup("<h2>" + feature.properties.name + ", " + feature.properties.city +  ", " + feature.properties.country + "</h3>");
-    }
-  }).addTo(map);
-
+d3.json(airportData).then(function(data) {
+    console.log(data);
+  // Creating a GeoJSON layer with the retrieved data.
   L.geoJSON(data, {
-    onEachFeature: function(feature, layer) {
-      layer.bindPopup();
-     }
-});
-  // Create a polyline using the line coordinates and make the line red.
-L.polyline(line, {
-    dashArray: '5',
-    weight: 1,
-    color: "black"
+      // We turn each feature into a marker on the map.
+      pointToLayer: function(feature, latlng) {
+        console.log(feature);
+        return L.marker(latlng)
+        .bindPopup("<h2>" + feature.properties.name + "</h2> <hr> <h3>LOCATED IN: " + feature.properties.city +  ", " + feature.properties.country + "</h3>");
+      }  
   }).addTo(map);
+});
