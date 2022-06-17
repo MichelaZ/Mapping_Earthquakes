@@ -1,7 +1,7 @@
 // Add console.log to check to see if our code is working.
 $(document).ready(function() {
     // STEP 0: Get the Data
-    console.log(cities);
+    console.log(line);
 });
 
 
@@ -39,34 +39,49 @@ var satellite = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/
   accessToken: API_KEY
 });
 
+var nav = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+  attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
+  maxZoom: 18,
+  id: "navigation-preview-night-v4",
+  accessToken: API_KEY
+});
 
 var baseMaps = {
     "Dark": dark,
     "Light": light,
     "Satellite": satellite,
-    "Street": street
+    "Street": street,
+    "Nighttime Navigation": nav
+
   };
 
   // Create the map object with a center and zoom level.
 var map = L.map("mapid", {
-    center: [37.09, -95.71],
-    zoom: 5,
-    layers: [light] // default
+    center: [30, 30],
+    zoom: 2,
+    layers: [nav] // default
   });
 
 L.control.layers(baseMaps).addTo(map);
 
-// Coordinates for each point to be used in the line.
-let line = [
-    [37.6213, -122.3790],
-    [30.1975, -97.6664],
-    [43.6777, -79.6248],
-    [40.6413, -73.7781]
-  ];
+// Grabbing our GeoJSON data.
+L.geoJSON(sanFranAirport, {
+    // We turn each feature into a marker on the map.
+    pointToLayer: function(feature, latlng) {
+      console.log(feature);
+      return L.marker(latlng)
+      .bindPopup("<h2>" + feature.properties.name + ", " + feature.properties.city +  ", " + feature.properties.country + "</h3>");
+    }
+  }).addTo(map);
 
+  L.geoJSON(data, {
+    onEachFeature: function(feature, layer) {
+      layer.bindPopup();
+     }
+});
   // Create a polyline using the line coordinates and make the line red.
 L.polyline(line, {
     dashArray: '5',
     weight: 1,
-    color: "#e98a15"
+    color: "black"
   }).addTo(map);

@@ -29,3 +29,31 @@ let cities = [{
     population: 1660272
   }
   ];
+
+// Coordinates for each point to be used in the line.
+let line = [
+  [37.6213, -122.3790],
+  [30.1975, -97.6664],
+  [43.6777, -79.6248],
+  [40.6413, -73.7781]
+];
+
+  // Add GeoJSON data.
+let sanFranAirport =
+{"type":"FeatureCollection","features":[{
+    "type":"Feature",
+    "properties":{
+        "id":"3469",
+        "name":"San Francisco International Airport",
+        "city":"San Francisco",
+        "country":"United States",
+        "faa":"SFO",
+        "icao":"KSFO",
+        "alt":"13",
+        "tz-offset":"-8",
+        "dst":"A",
+        "tz":"America/Los_Angeles"},
+        "geometry":{
+            "type":"Point",
+            "coordinates":[-122.375,37.61899948120117]}}
+]};
