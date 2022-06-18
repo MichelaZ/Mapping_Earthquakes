@@ -1,23 +1,6 @@
-# Earthquake Mapping:
-## Purpose
-For this project I created a map that shows earthquakes from the last 7 days using GeoJSON data from the USGS API. The size and color of the markers for the quakes correspond to the magnitude of the earthquakes. When you hover over the markers the opacity changes and when you click on it a pop-up with the date, time, magnitude and location of the quake will be visible. There are several different options to view the map that can be toggled on and off in the top right corner of the page. 
+// Add console.log to check to see if our code is working.
+console.log("working");
 
-##### Deliverable 1: 
-![Deliverable1]()
-
-##### Deliverable 2:
-![Deliverable2]()
-
-##### Deliverable 2:
-![Deliverable1]()
-
-
-## Methods: 
-I up my folder structure, HTML, and CSS file which was pretty much straight out of the module, but I will walk through the logic.js file below. 
-
-### Logic.js
-1. I set up the base map layers.
-```
 var streets = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
   attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
   maxZoom: 18,
@@ -62,33 +45,35 @@ let baseMaps = {
   "Satellite": satelliteStreets
   
 };
-```
-2. I set up the overlay layers. 
-```
+
+// 1. Add a 2nd layer group for the tectonic plate data.
 let allEarthquakes = new L.LayerGroup();
 let tectonic = new L.LayerGroup();
 let majorEarthquakes = new L.LayerGroup();
 
+// 2. Add a reference to the tectonic plates group to the overlays object.
 let overlays = {
   "Earthquakes": allEarthquakes,
   "Tectonic Plates": tectonic,
   "Major Earthquakes": majorEarthquakes
-```
-3. I initialized the map and set up layer controls. I set the defaults to show the map in dark mode with the tectonic plates and earthquakes visible.
-```
+};
+
 var map = L.map("mapid", {
 	center: [30, -13],
 	zoom: 3,
   layers: [dark, allEarthquakes, tectonic] // default
 });
+
+// Then we add a control to the map that will allow the user to change which
+// layers are visible.
 L.control.layers(baseMaps, overlays).addTo(map);
-```
-4. I retrieved the earthquake GeoJSON data using d3
-```
+
+// Retrieve the earthquake GeoJSON data.
 d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson").then(function(data) {
-```
-5. I set up the style and created functions to create markers with sizes and colors dependent on the magnitude of the earthquake.
-```
+  
+  // This function returns the style data for each of the earthquakes we plot on
+  // the map. We pass the magnitude of the earthquake into two separate functions
+  // to calculate the color and radius.
   function styleInfo(feature) {
     return {
       opacity: 1,
@@ -101,6 +86,7 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
     };
   }
 
+  // This function determines the color of the marker based on the magnitude of the earthquake.
   function getColor(magnitude) {
     if (magnitude > 5) {
       return "#ea2c2c";
@@ -120,26 +106,32 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
     return "#98ee00";
   }
 
+  // This function determines the radius of the earthquake marker based on its magnitude.
+  // Earthquakes with a magnitude of 0 were being plotted with the wrong radius.
   function getRadius(magnitude) {
     if (magnitude === 0) {
       return 1;
     }
     return magnitude * 4;
   }
-````
-6. Then I created a geoJSON layer  for All the earthquakes and added markers for each point on the map. These markers have a hover function that changes the opacity of the fill color when you hover over it. I created a pop-up that shows the date, time, magnitude and location when you click on the marker.
-```
+
+  // Creating a GeoJSON layer with the retrieved data.
   L.geoJson(data, {
+    	// We turn each feature into a circleMarker on the map.
     	pointToLayer: function(feature, latlng) {
       		console.log(data);
       		return L.circleMarker(latlng);
         },
+      // We set the style for each circleMarker using our styleInfo function.
     style: styleInfo,
+     // We create a popup for each circleMarker to display the magnitude and location of the earthquake
      onEachFeature: function(feature, layer) {
+      //add timestamp
         var unix_timestamp = feature.properties.time;
         var date = new Date(unix_timestamp).toLocaleDateString("en-US");
         var time = new Date(unix_timestamp).toLocaleTimeString("en-US");
       layer.bindPopup("Date: " + date + "<br>Time: " + time + "<br>Magnitude: " + feature.properties.mag + "<br>Location: " + feature.properties.place);
+      // event listeners
       layer.on({
         mouseover: function(event) {
             let layer_target = event.target;
@@ -157,9 +149,8 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
   }).addTo(allEarthquakes);
 
 });
-```
-7. Then I repeated steps 4-6 for the Major earthquakes layer.
-```  d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_week.geojson").then(function(data) {
+  // Retrieve the major earthquake GeoJSON data >4.5 mag for the week.
+  d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_week.geojson").then(function(data) {
 
     function styleInfo(feature) {
       return {
@@ -173,6 +164,7 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
       };
     }
 
+      // Change the color function to use three colors for the major earthquakes based on the magnitude of the earthquake.
       function getColor(magnitude) {
         if (magnitude > 5) {
           return "#ea2c2c";
@@ -183,6 +175,7 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
         return "#98ee00";
       }
 
+      // Use the function that determines the radius of the earthquake marker based on its magnitude.
       function getRadius(magnitude) {
         if (magnitude === 0) {
           return 1;
@@ -190,6 +183,7 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
         return magnitude * 4;
       }
     
+    // Creating a GeoJSON layer with the retrieved data.
     L.geoJson(data, {
       // We turn each feature into a circleMarker on the map.
       pointToLayer: function(feature, latlng) {
@@ -222,9 +216,8 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
         }
     }).addTo(majorEarthquakes);
   });
-```
-8. Then I added a legend for the earthquakes and major earthquake layers.
-```
+
+    // Here we create a legend control object.
   let legend = L.control({
     position: "bottomright"
   });
@@ -243,6 +236,7 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
         "#ea2c2c"
       ];
 
+    // Looping through our intervals to generate a label with a colored square for each interval.
       for (var i = 0; i < magnitudes.length; i++) {
         console.log(colors[i]);
         div.innerHTML +=
@@ -252,13 +246,14 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
         return div;
       };
 
+      // Finally, we our legend to the map.
       legend.addTo(map);
-```
-9. Then I gathered Tectonic Plate geoJSON data and added it to the tectonic overlay layer.
-```      d3.json("https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_boundaries.json").then(function(data) {
+
+      //Use d3.json to make a call to get our Tectonic Plate geoJSON data.
+      d3.json("https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_boundaries.json").then(function(data) {
         L.geoJson(data, {
         style: {color: "#aacc00", weight: 3},
         }).addTo(tectonic); 
         
       });
-```
+  
