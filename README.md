@@ -3,13 +3,13 @@
 For this project I created a map that shows earthquakes from the last 7 days using GeoJSON data from the USGS API. The size and color of the markers for the quakes correspond to the magnitude of the earthquakes. When you hover over the markers the opacity changes and when you click on it a pop-up with the date, time, magnitude and location of the quake will be visible. There are several different options to view the map that can be toggled on and off in the top right corner of the page. 
 
 ##### Deliverable 1: 
-![Deliverable1]()
+![Deliverable1](https://github.com/MichelaZ/Mapping_Earthquakes/blob/main/Earthquake_Challenge/Resources/Deliverable1.png)
 
 ##### Deliverable 2:
-![Deliverable2]()
+![Deliverable2](https://github.com/MichelaZ/Mapping_Earthquakes/blob/main/Earthquake_Challenge/Resources/Deliverable2.png)
 
 ##### Deliverable 2:
-![Deliverable1]()
+![Deliverable1](https://github.com/MichelaZ/Mapping_Earthquakes/blob/main/Earthquake_Challenge/Resources/Deliverable3.png)
 
 
 ## Methods: 
