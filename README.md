@@ -8,7 +8,7 @@ For this project I created a map that shows earthquakes from the last 7 days usi
 ##### Deliverable 2:
 ![Deliverable2](https://github.com/MichelaZ/Mapping_Earthquakes/blob/main/Earthquake_Challenge/Resources/Deliverable2.png)
 
-##### Deliverable 2:
+##### Deliverable 3:
 ![Deliverable1](https://github.com/MichelaZ/Mapping_Earthquakes/blob/main/Earthquake_Challenge/Resources/Deliverable3.png)
 
 
